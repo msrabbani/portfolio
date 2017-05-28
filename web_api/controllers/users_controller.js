@@ -2,7 +2,8 @@ const Users = require('../models/users_model');
 const bcrypt = require('bcrypt');
 
 function getUsers(req, res) {
-  Users.find({}, function(err, result) {
+  Users.find().populate('memo_list')
+  .exec(function(err, result) {
     if (err) {
       res.send(err.message);
     }
@@ -11,6 +12,7 @@ function getUsers(req, res) {
     res.send(result);
   });
 }
+
 
 function getSingle(req, res) {
   Users.find({
@@ -45,7 +47,7 @@ function createUser(req, res) {
   });
 }
 
-function updateUsers(req, res) {
+function updateUser(req, res) {
   let hash;
   if (req.body.password) {
     hash = bcrypt.hashSync(req.body.password, 8);
@@ -76,7 +78,7 @@ function updateUsers(req, res) {
   });
 }
 
-function deleteUsers(req, res) {
+function deleteUser(req, res) {
   Users.remove({
     '_id': req.params.id
   }, function(err, result) {
@@ -90,5 +92,5 @@ function deleteUsers(req, res) {
 }
 
 module.exports = {
-  getUsers, getSingle, createUser, updateUsers, deleteUsers
+  getUsers, getSingle, createUser, updateUser, deleteUser
 }
