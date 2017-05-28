@@ -1,5 +1,8 @@
+require('dotenv').config();
 const Users = require('../models/users_model');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+let secret = process.env.SECRET_KEY;
 
 function getUsers(req, res) {
   Users.find().populate('memo_list')
@@ -91,6 +94,24 @@ function deleteUser(req, res) {
   });
 }
 
+function login(req, res) {
+  Users.findOne({
+    'email': req.body.email
+  }, function(err, user) {
+    if (err) {
+      res.send(err.message);
+    }
+    bcrypt.compare(req.body.password, user.password, function(err, result) {
+      if (result) {
+        let token = jwt.sign({role: user.role, id: user._id}, secret);
+        res.send(token);
+      } else {
+        res.send("Wrong password..")
+      }
+    });
+  });
+}
+
 module.exports = {
-  getUsers, getSingle, createUser, updateUser, deleteUser
+  getUsers, getSingle, createUser, updateUser, deleteUser, login
 }

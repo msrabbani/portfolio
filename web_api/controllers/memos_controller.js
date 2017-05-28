@@ -14,12 +14,12 @@ function getAll(req, res) {
 
 function getSingle(req, res) {
   Memos.find({
-    '_id': req.params.id
+    'creator': req.params.id
   }, function(err, result) {
     if (err) {
       res.send(err.message);
     }
-    console.log("Found the following record:");
+    console.log("Found the following records:");
     console.log(result);
     res.send(result);
   });
