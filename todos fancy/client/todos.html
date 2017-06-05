@@ -10,9 +10,12 @@
     <title>Todos Fancy</title>
   </head>
   <body>
+  <div id="app">
     <div class="title">
       <h1>Todos Fancy</h1>
+      <a href="#" onclick="logout()">Log Out</a>
     </div>
+
     <div class="container">
 
       <nav class="todo_nav">
@@ -96,10 +99,61 @@
             </form>
           </div>
       </div>
-
     </div>
+
     <div class="blog_title">Made with <i class="fa fa-heart fa-lg"></i> by <a href="http://tirtawiryaputra.com" class="blog_attr">TWP</a></div>
+  </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+    var app = new Vue({
+      el: '#app',
+      beforeCreate: function() {
+        if(window.localStorage.getItem('token') === null) {
+          alert('You must login first');
+          window.location.href="index.html";
+        }
+      },
+      created: function() {
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId: '1236662039780159',
+            cookie: true,
+            xfbml: true,
+            version: 'v2.8'
+          });
+          FB.getLoginStatus(function(response) {
+            console.log(response);
+          });
+          FB.AppEvents.logPageView();
+        };
+        (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {
+            return;
+          }
+          js = d.createElement(s);
+          js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+      }
+    });
+
+    function logout() {
+      FB.logout(function(response) {
+        remove(response);
+      });
+    }
+
+    function remove(response) {
+      alert('You are logout');
+      console.log(response);
+      if (response.status !== 'connected');
+      window.localStorage.clear();
+      window.location.href="index.html";
+    }
+    </script>
     <script type="text/javascript" src="assets/todo.js"></script>
   </body>
 </html>

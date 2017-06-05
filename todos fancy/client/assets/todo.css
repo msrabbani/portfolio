@@ -442,14 +442,23 @@ body .container .todo_info .info_input form .form_content .remove_input:before {
 }
 body .blog_title {
   margin-top: 20px;
-}
-body .blog_title {
   font-size: 1em;
   color: #35495e;
+  text-align: center;
 }
 .blog_attr {
   color: #35495e;
 }
 .blog_title a:hover {
   color: #fff;
+}
+body .title a {
+  position: relative;
+  left: 35em;
+  text-decoration: none;
+  color: #50514f;
+}
+body .title a:hover {
+  text-decoration: underline;
+  color: #da4167;
 }
