@@ -6,11 +6,21 @@
     <meta name="author" content="Tirta Wirya Putra">
     <meta name="description" content="Todos Fancy Login">
     <title>Login</title>
+    <style>
+    body {
+      background-color: #da4167;
+      color: #fff;
+      font-family: 'Ubuntu', sans-serif;
+    }
+    #app {
+      margin: 10em 30em;
+    }
+    </style>
   </head>
   <body>
     <div id="app">
       <p>Login to continue</p>
-      <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false" onlogin="checkLoginState();"></div>
+      <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false" onlogin="checkLoginState();"></div>
     </div>
   <script src="https://unpkg.com/vue"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
