@@ -30,19 +30,8 @@
         <div class="content_add active">
           <div class="todo_tips">
             <ul>
-              <li class="todo_1">
-                <p>- Build E-commerce. </p>
-                <div class="btn-group">
-                  <div class="btn del-btn">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                  </div>
-                  <div class="btn edit-btn">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </li>
-              <li class="todo_2">
-                <p>- Playing Harvest Moon. </p>
+              <li v-for="(todo, index) in todos" :class="['todo_' + (index+1)]">
+                <p>- {{todo.memo}}</p>
                 <div class="btn-group">
                   <div class="btn del-btn">
                     <i class="fa fa-trash" aria-hidden="true"></i>
@@ -58,17 +47,17 @@
         </div>
         <div class="content_pending">
           <div class="todo_tips">
-            <ul>
-              <li class="todo_1">
-              <p>- Build E-commerce. </p><div class="btn-group"><div class="btn">Done?</div></div></li>
+            <ul v-for="(todo, index) in pending">
+              <li :class="['todo_' + (index+1)]">
+              <p>- {{todo.memo}}</p><div class="btn-group"><div class="btn">Done?</div></div></li>
             </ul>
           </div>
         </div>
         <div class="content_done">
           <div class="todo_tips">
-            <ul>
-              <li class="todo_2">
-                <p>- Playing Harvest Moon. </p>
+            <ul v-for="(todo, index) in completed">
+              <li :class="['todo_' + (index+1)]">
+                <p>- {{todo.memo}} </p>
                 <div class="btn-group">
                   <div class="btn">Not done?</div>
                 </div>
@@ -105,55 +94,7 @@
   </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
-    <script>
-    var app = new Vue({
-      el: '#app',
-      beforeCreate: function() {
-        if(window.localStorage.getItem('token') === null) {
-          alert('You must login first');
-          window.location.href="index.html";
-        }
-      },
-      created: function() {
-        window.fbAsyncInit = function() {
-          FB.init({
-            appId: '1236662039780159',
-            cookie: true,
-            xfbml: true,
-            version: 'v2.8'
-          });
-          FB.getLoginStatus(function(response) {
-            console.log(response);
-          });
-          FB.AppEvents.logPageView();
-        };
-        (function(d, s, id) {
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) {
-            return;
-          }
-          js = d.createElement(s);
-          js.id = id;
-          js.src = "//connect.facebook.net/en_US/sdk.js";
-          fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-      }
-    });
-
-    function logout() {
-      FB.logout(function(response) {
-        remove(response);
-      });
-    }
-
-    function remove(response) {
-      alert('You are logout');
-      console.log(response);
-      if (response.status !== 'connected');
-      window.localStorage.clear();
-      window.location.href="index.html";
-    }
-    </script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript" src="assets/todo.js"></script>
   </body>
 </html>
