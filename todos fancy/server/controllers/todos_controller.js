@@ -58,6 +58,17 @@ function deleteTodo(req, res) {
   });
 }
 
+function deleteTodos(req, res) {
+  Todos.remove({}, function(err, result) {
+    if (err) {
+      res.send(err.message);
+    }
+    console.log("Delete:");
+    console.log(result);
+    res.send(result);
+  });
+}
+
 module.exports = {
-  getAll, createTodo, updateTodo, deleteTodo
+  getAll, createTodo, updateTodo, deleteTodo, deleteTodos
 }

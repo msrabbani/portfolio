@@ -13,7 +13,7 @@
   <div id="app">
     <div class="title">
       <h1>Todos Fancy</h1>
-      <a href="#" onclick="logout()">Log Out</a>
+      <a href="#" @click="logout()">Log Out</a>
     </div>
 
     <div class="container">
@@ -34,10 +34,10 @@
                 <p>- {{todo.memo}}</p>
                 <div class="btn-group">
                   <div class="btn del-btn">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <i class="fa fa-trash" aria-hidden="true" @click="removeTodo(todo)"></i>
                   </div>
                   <div class="btn edit-btn">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <i class="fa fa-pencil" aria-hidden="true" @click="getIndex(todo)"></i>
                   </div>
                 </div>
               </li>
@@ -49,7 +49,7 @@
           <div class="todo_tips">
             <ul v-for="(todo, index) in pending">
               <li :class="['todo_' + (index+1)]">
-              <p>- {{todo.memo}}</p><div class="btn-group"><div class="btn">Done?</div></div></li>
+              <p>- {{todo.memo}}</p><div class="btn-group"><div class="btn" @click="changeStatus(todo.memo, todo.status)">Done?</div></div></li>
             </ul>
           </div>
         </div>
@@ -59,7 +59,7 @@
               <li :class="['todo_' + (index+1)]">
                 <p>- {{todo.memo}} </p>
                 <div class="btn-group">
-                  <div class="btn">Not done?</div>
+                  <div class="btn" @click="changeStatus(todo.memo, todo.status)">Not done?</div>
                 </div>
               </li>
             </ul>
@@ -78,9 +78,9 @@
             </form>
           </div>
           <div class="info_input info_update">
-            <form id="update_form" >
+            <form id="update_form">
               <div class="form_content">
-                <input id="todo_update_id" type="hidden">
+                <!-- <input id="todo_update_id" type="hidden"> -->
                 <input id="todo_update" class="input_style" name="text" type="text"/>
                 <input id="submit_update" class="submit_style" type="submit" name="submit" value="Update">
                 <div class="remove_input"></div>
