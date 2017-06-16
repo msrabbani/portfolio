@@ -3,8 +3,8 @@
     <nav class="nav has-shadow" id="top">
       <div class="container">
         <div class="nav-left">
-          <a class="nav-item" href="../index.html">
-            <!-- <img src="../images/bulma.png" alt="Description"> -->
+          <a class="nav-item">
+            Kanban Board
           </a>
         </div>
         <span class="nav-toggle">
@@ -13,24 +13,9 @@
           <span></span>
         </span>
         <div class="nav-right nav-menu">
-          <a class="nav-item is-tab is-active">
-            Home
-          </a>
-          <a class="nav-item is-tab">
-            Features
-          </a>
-          <a class="nav-item is-tab">
-            Team
-          </a>
-          <a class="nav-item is-tab">
-            Help
-          </a>
           <span class="nav-item">
-            <a class="button">
-              Log in
-            </a>
-            <a class="button is-info">
-              Sign up
+            <a class="button is-primary is-outlined">
+              Add new Project
             </a>
           </span>
         </div>
@@ -38,128 +23,85 @@
     </nav>
 
     <div class="section">
-      <div class="">
         <div class="boards">
           <div class="columns">
-            <div class="column is-3 board" id="b1">
+            <div class="column is-3 board">
               <div class="box is-gray">
                 <div class="head">
-                  <div class="name">Backlog</div>
+                  <div class="name is-pink">Backlog</div>
                   <div class="count">1</div>
-                  <div class="options"><i class="fa fa-ellipsis-h"></i></div>
                 </div>
 
-                <div class="items">
-                  <div class="box" id="b1c1">
-                    <p class="title">test item</p>
-                    <p class="meta">
-                      <img src="https://placehold.it/28x28">
-                      <a href="#"><i class="fa fa-bars"></i></a>
-                    </p>
-                  </div>
-
-                  <div class="add-card">
-                    <div onclick="addCard(this)">
-                      <i class="fa fa-plus-circle"></i>
-                      Add new card
+                <div class="items"  v-for="todo in backlog">
+                  <div class="box">
+                    <p class="title">{{todo.title}}</p>
+                    <p class="small">Point: {{todo.point}}</p>
+                    <p class="small">Assigned to: {{todo.assign}}</p>
+                    <div class="block">
+                      <button class="button is-info is-small is-right" @click="details_modal = true">Details</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div class="column is-3 board" id="b2">
-              <div class="box is-gray">
-                <div class="head">
-                  <div class="name">Upcoming</div>
-                  <div class="count">1</div>
-                  <div class="options"><i class="fa fa-ellipsis-h"></i></div>
-                </div>
-                <div class="items">
-                  <div class="box" id="b2c1">
-                    <p class="title">Update middle-out compression algorithm</p>
-                    <p class="meta">
-                      <img src="https://placehold.it/28x28">
-                      <a href="#"><i class="fa fa-bars"></i></a>
-                    </p>
-                  </div>
-                  <div class="add-card">
-                    <div onclick="addCard(this)">
-                      <i class="fa fa-plus-circle"></i>
-                      Add new card
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="column is-3 board" id="b3">
-              <div class="box is-gray">
-                <div class="head">
-                  <div class="name">In Progress</div>
-                  <div class="count">1</div>
-                  <div class="options"><i class="fa fa-ellipsis-h"></i></div>
-                </div>
-                <div class="items">
-                  <div class="box" id="b3c1">
-                    <p class="title">Send project notification to users</p>
-                    <p class="meta">
-                      <img src="https://placehold.it/28x28">
-                      <a href="#"><i class="fa fa-bars"></i></a>
-                    </p>
-                  </div>
-                  <div class="add-card">
-                    <div onclick="addCard(this)">
-                      <i class="fa fa-plus-circle"></i>
-                      Add new card
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="column is-3 board" id="b4">
-              <div class="box is-gray">
-                <div class="head">
-                  <div class="name">Complete</div>
-                  <div class="count">1</div>
-                  <div class="options"><i class="fa fa-ellipsis-h"></i></div>
-                </div>
-                <div class="items">
-                  <div class="box" id="b4c1">
-                    <p class="title">Create first test</p>
-                    <p class="meta">
-                      <img src="https://placehold.it/28x28">
-                      <a href="#"><i class="fa fa-bars"></i></a>
-                      <a href="#"><i class="fa fa-comment-o"></i></a>
-                    </p>
-                  </div>
-                  <div class="add-card">
-                    <div onclick="addCard(this)">
-                      <i class="fa fa-plus-circle"></i>
-                      Add new card
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
-      </div>
+
     </div>
   </div>
 </template>
 
 <script>
+import * as firebase from 'firebase'
+let app = firebase.initializeApp({
+  // Initialize Firebase
+  apiKey: 'AIzaSyDkz9v1ZRjT7pp-KW7eQ1eHb7uZTETI4Wg',
+  authDomain: 'kanban-raynor.firebaseapp.com',
+  databaseURL: 'https://kanban-raynor.firebaseio.com',
+  projectId: 'kanban-raynor',
+  storageBucket: 'kanban-raynor.appspot.com',
+  messagingSenderId: '782078687973'
+})
+
+let db = app.database()
+let todosRef = db.ref('todos')
+
 export default {
-  name: 'Index'
+  name: 'Index',
+  details_modal: false,
+  firebase: {
+    todos: todosRef
+  },
+  computed: {
+    backlog () {
+      return this.todos.filter((todo) => todo.status === 1)
+    }
+  }
 }
 </script>
 
 <style scoped>
   body {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  }
+
+  .nav-item {
+    color: #00d1b2;
+    font-size: 1.2em;
+  }
+
+  .is-info {
+    color: white;
+  }
+
+  .block {
+    margin-top: 1em;
+  }
+
+  .is-info:hover {
+    color: #3273dc;
+    background-color: white;
+    border-color: #3273dc;
   }
 
   .boards {
@@ -174,11 +116,11 @@ export default {
     padding: 20px 0;
   }
 
-  .box .head .name {
+  .box .head .is-pink {
     display: inline-block;
-    font-size: 20px;
+    font-size: 1.5em;
     font-weight: bold;
-    color: #2C2C30;
+    color: #ff3860;
   }
 
   .box .head .count {
@@ -197,22 +139,11 @@ export default {
   }
 
   .items .box .title {
-    font-size: 19px;
+    font-size: 1.6em;
   }
 
-  .items .box .meta img {
-    border-radius: 30px;
-    margin-right: 10px;
+  .small {
+    font-size: 0.9em;
   }
 
-  .items .box .meta .fa {
-    margin: 3px 7px;
-    color: #CCCCCC;
-  }
-
-  .items .add-card div {
-    color: #AAAAAA;
-    font-weight: bold;
-    font-size: 16px;
-  }
 </style>
