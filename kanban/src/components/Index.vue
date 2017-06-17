@@ -134,7 +134,7 @@
                 </section>
                 <footer class="modal-card-foot">
                   <button class="button is-primary card-footer-item" v-show="prev.button" @click="prevStatus(selectedTodo)">{{prev.placeholder}}</button>
-                  <button class="button is-danger card-footer-item">Delete</button>
+                  <button class="button is-danger card-footer-item" @click="confirm">Delete</button>
                   <button class="button is-success card-footer-item" v-show="next.button" @click="nextStatus(selectedTodo)">{{next.placeholder}}</button>
                 </footer>
               </div>
@@ -148,7 +148,7 @@
       :active.sync="add_modal"
       :width="380">
       <div class="modal-card" v-show="add_modal">
-        <form @submit="addProject">
+        <form @submit="addTodo">
           <header class="modal-card-head">
             <p class="modal-card-title">Add new todo</p>
           </header>
@@ -191,7 +191,7 @@
     <sweet-modal icon="success" ref="alert_success">Success!<br>{{greet}}</sweet-modal>
     <sweet-modal icon="warning" ref="alert_warning">
       Are you sure?<br><br>
-      <button class="button is-success" @click="">Yes</button>
+      <button class="button is-success" @click="deleteTodo(selectedTodo)">Yes</button>
       <button class="button is-danger" @click="close">No</button>
     </sweet-modal>
 
@@ -303,11 +303,25 @@ export default {
       todosRef.child(todo['.key']).child('status').set(status + 1)
       this.details_modal = false
     },
-    addProject () {
+    addTodo () {
       this.add_modal = false
       todosRef.push(this.newTodo)
       this.greet = 'New todo has been successfully added'
       this.$refs.alert_success.open()
+    },
+    deleteTodo (todo) {
+      todosRef.child(todo['.key']).remove()
+      this.details_modal = false
+      this.$refs.alert_warning.close()
+      this.greet = 'Todo has been successfully deleted'
+      this.$refs.alert_success.open()
+      this.newTodo = {
+        assign: null,
+        description: null,
+        point: null,
+        status: 1,
+        title: null
+      }
     },
     confirm () {
       this.$refs.alert_warning.open()
