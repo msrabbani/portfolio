@@ -15,7 +15,7 @@
         <div class="nav-right nav-menu">
           <span class="nav-item">
             <a class="button is-primary is-outlined" @click="add_modal = true">
-              Add new Project
+              Add new todo
             </a>
           </span>
         </div>
@@ -119,8 +119,17 @@
                   <div class="content">
                     Todo Point:<br>{{selectedTodo.point}}
                   </div>
-                  <div class="content">
-                    Todo Status:<br>{{selectedTodo.status}}
+                  <div class="content" v-if="selectedTodo.status === 1">
+                    Todo Status:<br>Backlog
+                  </div>
+                  <div class="content" v-else-if="selectedTodo.status === 2">
+                    Todo Status:<br>Upcoming
+                  </div>
+                  <div class="content" v-else-if="selectedTodo.status === 3">
+                    Todo Status:<br>In Progress
+                  </div>
+                  <div class="content" v-else>
+                    Todo Status:<br>Complete
                   </div>
                 </section>
                 <footer class="modal-card-foot">
@@ -139,40 +148,53 @@
       :active.sync="add_modal"
       :width="380">
       <div class="modal-card" v-show="add_modal">
-        <form @submit="confirm">
-          <h2>New blog</h2><hr>
-          <b-field label="Blog Title">
-            <b-input v-model="newTodo.title" placeholder="Your blog title" required></b-input>
-          </b-field>
+        <form @submit="addProject">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Add new todo</p>
+          </header>
+          <section class="modal-card-body">
+            <b-field label="Todo Title">
+              <b-input v-model="newTodo.title" placeholder="Your todo title" required></b-input>
+            </b-field>
 
-          <b-field label="Blog Category">
-            <b-input
-              placeholder="Your blog category"
-              v-model="newTodo.point"
-              required>
-            </b-input>
-          </b-field>
+            <b-field label="Todo Point">
+              <b-input
+                placeholder="Your todo point"
+                v-model="newTodo.point"
+                required>
+              </b-input>
+            </b-field>
 
-          <b-field label="Blog Content">
-            <b-input type="textarea"
-              minlength="10"
-              maxlength="10000"
-              v-model="newTodo.description"
-              placeholder="Content type here.."
-              required>
-            </b-input>
-          </b-field>
-          <button class="nav-item button is-success is-outlined"><i class="material-icons">exit_to_app</i>Submit</button>
+            <b-field label="Todo Description">
+              <b-input type="textarea"
+                placeholder="Description type here.."
+                v-model="newTodo.description"
+                required>
+              </b-input>
+            </b-field>
+
+            <b-field label="Todo Assign">
+              <b-input
+                placeholder="Assign to.."
+                v-model="newTodo.assign"
+                required>
+              </b-input>
+            </b-field>
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-success is-outlined">Submit</button>
+          </footer>
         </form>
-
-        <sweet-modal icon="success" ref="alert_success">Success!<br>Add project success..</sweet-modal>
-        <sweet-modal icon="warning" ref="alert_warning">
-          Are you sure?<br><br>
-          <button class="button is-success" @click="addProject">Yes</button>
-          <button class="button is-danger" @click="close">No</button>
-        </sweet-modal>
       </div>
     </b-modal>
+
+    <sweet-modal icon="success" ref="alert_success">Success!<br>{{greet}}</sweet-modal>
+    <sweet-modal icon="warning" ref="alert_warning">
+      Are you sure?<br><br>
+      <button class="button is-success" @click="">Yes</button>
+      <button class="button is-danger" @click="close">No</button>
+    </sweet-modal>
+
 
   </div>
 </template>
@@ -211,6 +233,7 @@ export default {
       },
       details_modal: false,
       add_modal: false,
+      greet: '',
       selectedTodo: {
         assign: null,
         description: null,
@@ -281,8 +304,10 @@ export default {
       this.details_modal = false
     },
     addProject () {
-      alert('success')
-      this.$refs.alert_warning.close()
+      this.add_modal = false
+      todosRef.push(this.newTodo)
+      this.greet = 'New todo has been successfully added'
+      this.$refs.alert_success.open()
     },
     confirm () {
       this.$refs.alert_warning.open()
@@ -399,5 +424,10 @@ export default {
 
   .small {
     font-size: 0.9em;
+  }
+
+  .modal-card {
+    margin: 0 auto;
+    width: auto;
   }
 </style>
