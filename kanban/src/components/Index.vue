@@ -14,7 +14,7 @@
         </span>
         <div class="nav-right nav-menu">
           <span class="nav-item">
-            <a class="button is-primary is-outlined">
+            <a class="button is-primary is-outlined" @click="add_modal = true">
               Add new Project
             </a>
           </span>
@@ -65,6 +65,46 @@
               </div>
             </div>
 
+            <div class="column is-3 board">
+              <div class="box is-purple">
+                <div class="head">
+                  <div class="name is-purple">In Progress</div>
+                  <div class="count">{{inProgress.length}}</div>
+                </div>
+
+                <div class="items"  v-for="todo in inProgress">
+                  <div class="box">
+                    <p class="title">{{todo.title}}</p>
+                    <p class="small">Point: {{todo.point}}</p>
+                    <p class="small">Assigned to: {{todo.assign}}</p>
+                    <div class="block">
+                      <button class="button is-info is-small is-right" @click="getDetail(todo, 'inprogress')">Details</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="column is-3 board">
+              <div class="box is-green">
+                <div class="head">
+                  <div class="name is-green">Complete</div>
+                  <div class="count">{{complete.length}}</div>
+                </div>
+
+                <div class="items"  v-for="todo in complete">
+                  <div class="box">
+                    <p class="title">{{todo.title}}</p>
+                    <p class="small">Point: {{todo.point}}</p>
+                    <p class="small">Assigned to: {{todo.assign}}</p>
+                    <div class="block">
+                      <button class="button is-info is-small is-right" @click="getDetail(todo, 'complete')">Details</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <b-modal
               :active.sync="details_modal"
               :width="380">
@@ -94,11 +134,53 @@
           </div>
         </div>
     </div>
+
+    <b-modal
+      :active.sync="add_modal"
+      :width="380">
+      <div class="modal-card" v-show="add_modal">
+        <form @submit="confirm">
+          <h2>New blog</h2><hr>
+          <b-field label="Blog Title">
+            <b-input v-model="newTodo.title" placeholder="Your blog title" required></b-input>
+          </b-field>
+
+          <b-field label="Blog Category">
+            <b-input
+              placeholder="Your blog category"
+              v-model="newTodo.point"
+              required>
+            </b-input>
+          </b-field>
+
+          <b-field label="Blog Content">
+            <b-input type="textarea"
+              minlength="10"
+              maxlength="10000"
+              v-model="newTodo.description"
+              placeholder="Content type here.."
+              required>
+            </b-input>
+          </b-field>
+          <button class="nav-item button is-success is-outlined"><i class="material-icons">exit_to_app</i>Submit</button>
+        </form>
+
+        <sweet-modal icon="success" ref="alert_success">Success!<br>Add project success..</sweet-modal>
+        <sweet-modal icon="warning" ref="alert_warning">
+          Are you sure?<br><br>
+          <button class="button is-success" @click="addProject">Yes</button>
+          <button class="button is-danger" @click="close">No</button>
+        </sweet-modal>
+      </div>
+    </b-modal>
+
   </div>
 </template>
 
 <script>
 import * as firebase from 'firebase'
+import { SweetModal, SweetModalTab } from 'sweet-modal-vue'
+
 let app = firebase.initializeApp({
   // Initialize Firebase
   apiKey: 'AIzaSyDkz9v1ZRjT7pp-KW7eQ1eHb7uZTETI4Wg',
@@ -114,12 +196,21 @@ let todosRef = db.ref('todos')
 
 export default {
   name: 'Index',
+
   firebase: {
     todos: todosRef
   },
   data () {
     return {
+      newTodo: {
+        assign: null,
+        description: null,
+        point: null,
+        status: 1,
+        title: null
+      },
       details_modal: false,
+      add_modal: false,
       selectedTodo: {
         assign: null,
         description: null,
@@ -143,6 +234,12 @@ export default {
     },
     upcoming () {
       return this.todos.filter((todo) => todo.status === 2)
+    },
+    inProgress () {
+      return this.todos.filter((todo) => todo.status === 3)
+    },
+    complete () {
+      return this.todos.filter((todo) => todo.status === 4)
     }
   },
   methods: {
@@ -160,6 +257,17 @@ export default {
         this.prev.button = true
         this.next.button = true
         this.details_modal = true
+      } else if (state === 'inprogress') {
+        this.prev.placeholder = 'Upcoming'
+        this.next.placeholder = 'Complete'
+        this.prev.button = true
+        this.next.button = true
+        this.details_modal = true
+      } else {
+        this.prev.placeholder = 'In Progress'
+        this.prev.button = true
+        this.next.button = false
+        this.details_modal = true
       }
     },
     prevStatus (todo) {
@@ -171,7 +279,21 @@ export default {
       let status = todo.status
       todosRef.child(todo['.key']).child('status').set(status + 1)
       this.details_modal = false
+    },
+    addProject () {
+      alert('success')
+      this.$refs.alert_warning.close()
+    },
+    confirm () {
+      this.$refs.alert_warning.open()
+    },
+    close () {
+      this.$refs.alert_warning.close()
     }
+  },
+  components: {
+    SweetModal,
+    SweetModalTab
   }
 }
 </script>
@@ -229,6 +351,30 @@ export default {
 
   .box.is-yellow {
     border: 0.1em solid #FFC400;
+    background-color: #F5F5F5;
+  }
+
+  .box .head .is-purple {
+    display: inline-block;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #896bda;
+  }
+
+  .box.is-purple {
+    border: 0.1em solid #896bda;
+    background-color: #F5F5F5;
+  }
+
+  .box .head .is-green {
+    display: inline-block;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #00d1b2;
+  }
+
+  .box.is-green {
+    border: 0.1em solid #00d1b2;
     background-color: #F5F5F5;
   }
 
