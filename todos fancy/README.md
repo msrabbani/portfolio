@@ -1,4 +1,4 @@
-# kanban-board
+# Todos Fancy
 
 > Portfolio project
 
