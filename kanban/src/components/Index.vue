@@ -26,10 +26,10 @@
         <div class="boards">
           <div class="columns">
             <div class="column is-3 board">
-              <div class="box is-gray">
+              <div class="box is-pink">
                 <div class="head">
                   <div class="name is-pink">Backlog</div>
-                  <div class="count">1</div>
+                  <div class="count">{{backlog.length}}</div>
                 </div>
 
                 <div class="items"  v-for="todo in backlog">
@@ -38,15 +38,61 @@
                     <p class="small">Point: {{todo.point}}</p>
                     <p class="small">Assigned to: {{todo.assign}}</p>
                     <div class="block">
-                      <button class="button is-info is-small is-right" @click="details_modal = true">Details</button>
+                      <button class="button is-info is-small is-right" @click="getDetail(todo, 'backlog')">Details</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            <div class="column is-3 board">
+              <div class="box is-yellow">
+                <div class="head">
+                  <div class="name is-yellow">Upcoming</div>
+                  <div class="count">{{upcoming.length}}</div>
+                </div>
+
+                <div class="items"  v-for="todo in upcoming">
+                  <div class="box">
+                    <p class="title">{{todo.title}}</p>
+                    <p class="small">Point: {{todo.point}}</p>
+                    <p class="small">Assigned to: {{todo.assign}}</p>
+                    <div class="block">
+                      <button class="button is-info is-small is-right" @click="getDetail(todo, 'upcoming')">Details</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <b-modal
+              :active.sync="details_modal"
+              :width="380">
+              <div class="card" v-show="details_modal">
+                <header class="modal-card-head">
+                  <p class="modal-card-title">{{selectedTodo.title}}</p>
+                </header>
+                <section class="modal-card-body">
+                  <div class="content">
+                    Todo Description:<br>{{selectedTodo.description}}
+                  </div>
+                  <div class="content">
+                    Todo Point:<br>{{selectedTodo.point}}
+                  </div>
+                  <div class="content">
+                    Todo Status:<br>{{selectedTodo.status}}
+                  </div>
+                </section>
+                <footer class="modal-card-foot">
+                  <button class="button is-primary card-footer-item" v-show="prev.button" @click="prevStatus(selectedTodo)">{{prev.placeholder}}</button>
+                  <button class="button is-danger card-footer-item">Delete</button>
+                  <button class="button is-success card-footer-item" v-show="next.button" @click="nextStatus(selectedTodo)">{{next.placeholder}}</button>
+                </footer>
+              </div>
+            </b-modal>
+
           </div>
         </div>
-
     </div>
   </div>
 </template>
@@ -68,13 +114,63 @@ let todosRef = db.ref('todos')
 
 export default {
   name: 'Index',
-  details_modal: false,
   firebase: {
     todos: todosRef
+  },
+  data () {
+    return {
+      details_modal: false,
+      selectedTodo: {
+        assign: null,
+        description: null,
+        point: null,
+        status: null,
+        title: null
+      },
+      prev: {
+        button: true,
+        placeholder: ''
+      },
+      next: {
+        button: true,
+        placeholder: ''
+      }
+    }
   },
   computed: {
     backlog () {
       return this.todos.filter((todo) => todo.status === 1)
+    },
+    upcoming () {
+      return this.todos.filter((todo) => todo.status === 2)
+    }
+  },
+  methods: {
+    getDetail (todo, state) {
+      console.log(todo['.key'])
+      this.selectedTodo = todo
+      if (state === 'backlog') {
+        this.next.placeholder = 'Upcoming'
+        this.prev.button = false
+        this.next.button = true
+        this.details_modal = true
+      } else if (state === 'upcoming') {
+        this.prev.placeholder = 'Backlog'
+        this.next.placeholder = 'In Progress'
+        this.prev.button = true
+        this.next.button = true
+        this.details_modal = true
+      }
+    },
+    prevStatus (todo) {
+      let status = todo.status
+      todosRef.child(todo['.key']).child('status').set(status - 1)
+      this.details_modal = false
+    },
+    nextStatus (todo) {
+      let status = todo.status
+      todosRef.child(todo['.key']).child('status').set(status + 1)
+      this.details_modal = false
     }
   }
 }
@@ -108,10 +204,6 @@ export default {
     padding:40px 0;
   }
 
-  .boards .board .box.is-gray {
-    background-color: #F5F5F5;
-  }
-
   .boards .board .box .items {
     padding: 20px 0;
   }
@@ -121,6 +213,23 @@ export default {
     font-size: 1.5em;
     font-weight: bold;
     color: #ff3860;
+  }
+
+  .box.is-pink {
+    border: 0.1em solid #ff3860;
+    background-color: #F5F5F5;
+  }
+
+  .box .head .is-yellow {
+    display: inline-block;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FFC400;
+  }
+
+  .box.is-yellow {
+    border: 0.1em solid #FFC400;
+    background-color: #F5F5F5;
   }
 
   .box .head .count {
@@ -145,5 +254,4 @@ export default {
   .small {
     font-size: 0.9em;
   }
-
 </style>
