@@ -15,7 +15,7 @@ var gameOptions = {
   doubleSpikeRatio: 1,
   skyColor: 0xaaeaff,
   safeRadius: 180,
-  localStorageName: "climbgame",
+  localStorageName: "twpgame",
   versionNumber: "1.0"
 }
 window.onload = function() {
@@ -92,7 +92,7 @@ playGame.prototype = {
     tapTween = game.add.tween(tap).to({
       alpha: 0
     }, 200, Phaser.Easing.Cubic.InOut, true, 0, -1, true);
-    var tapText = game.add.bitmapText(game.width / 2, tap.y - 120, "font", "Click to jump", 45);
+    var tapText = game.add.bitmapText(game.width / 2, tap.y - 120, "font", "Click/Tap to jump", 45);
     tapText.anchor.set(0.5);
     this.menuGroup.add(tapText);
     var titleText = game.add.bitmapText(game.width / 2, tap.y - 200, "font", "JUMPERS", 90);
