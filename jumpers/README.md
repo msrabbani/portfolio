@@ -12,4 +12,4 @@ download jumpers folder
 open index.html with any web browser
 
 # See it Live
-https://kanban-raynor.firebaseapp.com
+http://tirtawiryaputra.com/jumpers
