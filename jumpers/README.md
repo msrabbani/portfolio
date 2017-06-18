@@ -8,7 +8,7 @@
 # Get assets
 download jumpers folder
 
-# serve in localhost:8080
+# running in local
 open index.html with any web browser
 
 # See it Live
